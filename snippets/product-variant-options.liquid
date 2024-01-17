@@ -44,8 +44,19 @@
       endcase
     endfor
   -%}
-
+ 
   {%- if block.settings.picker_type == 'button' -%}
+  {% if option.name == "Size" %}
+    <option
+      value="{{ value | escape }}"
+    >
+      {% if option_disabled -%}
+        {{- 'products.product.value_unavailable' | t: option_value: value -}}
+      {%- else -%}
+        {{- value -}}
+      {%- endif %}
+    </option>
+  {% else %}
     <input
       type="radio"
       id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
@@ -59,10 +70,32 @@
         class="disabled"
       {% endif %}
     >
-    <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
-      {{ value -}}
-      <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
-    </label>
+    {% if option.name == 'Color' %}
+      {% assign color_variants = product.variants | map: 'option1' | uniq %}
+      {% assign variant_image = '' %}
+      {% for variant in product.variants %}
+        {% if variant.option1 == value %}
+          {% assign variant_image = variant.image %}
+        {% endif %}
+      {% endfor %}
+      {% if variant_image != blank %}
+        <label
+          for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+          style="background-image: url({{ variant_image | img_url: '' }});height:50px;width:50px;background-size: cover;"
+        ></label>
+      {% else %}
+        <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+          {{ value -}}
+          <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
+        </label>
+      {% endif %}
+    {% else %} 
+      <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}">
+        {{ value -}}
+        <span class="visually-hidden">{{ 'products.product.variant_sold_out_or_unavailable' | t }}</span>
+      </label>
+    {% endif %}
+  {% endif %}
   {%- elsif block.settings.picker_type == 'dropdown' -%}
     <option
       value="{{ value | escape }}"

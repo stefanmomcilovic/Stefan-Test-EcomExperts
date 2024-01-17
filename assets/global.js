@@ -1217,8 +1217,13 @@ class VariantRadios extends VariantSelects {
 
   updateOptions() {
     const fieldsets = Array.from(this.querySelectorAll('fieldset'));
+    // Edited SMT: Added this line to fix the issue with the variant radios not updating
     this.options = fieldsets.map((fieldset) => {
-      return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+      if(fieldset.querySelectorAll('input').length > 0){
+        return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+      }else {
+        return Array.from(fieldset.querySelectorAll('option')).find((option) => option.selected).value;
+      }
     });
   }
 }
