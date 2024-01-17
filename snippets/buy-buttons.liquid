@@ -150,31 +150,20 @@
 
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", () => {
-  if(document.querySelector('#smt-size-select')) {
-    const sizeSelect = document.querySelector('#smt-size-select select');
-    // Add event listener on change sizeSelect
-    sizeSelect.addEventListener('change', () => {
-      checkForSelectedSize(sizeSelect);
-    });
-    // Check for selected size on page load
-    checkForSelectedSize(sizeSelect);
-
-    function checkForSelectedSize(sizeSelect){
-      // Get value of selected option
-      const selectedSize = sizeSelect.options[sizeSelect.selectedIndex].value;
+  setTimeout(() => {
+    if(document.querySelector('#smt-size-select')) {
+      const sizeSelect = document.querySelector('#smt-size-select select');
+      // Reset selected size on page load
+      sizeSelect.selectedIndex = 0;
       if(document.querySelector('.product-form__buttons')) {
         // Get all buttons in product-form__buttons div
         const buttons = document.querySelectorAll('.product-form__buttons button');
         // Loop through buttons and check if selectedSize is unselected make button disabled
         buttons.forEach(button => {
-          if(selectedSize == 'unselected') {
             button.disabled = true;
-          } else {
-            button.disabled = false;
-          }
         });
       }
     }
-  }
+  }, 500);
 });
 </script>
