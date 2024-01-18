@@ -162,6 +162,20 @@ document.addEventListener("DOMContentLoaded", () => {
         buttons.forEach(button => {
             button.disabled = true;
         });
+
+        sizeSelect.addEventListener('change', () => {
+          // Get selected size 
+          const selectedSize = sizeSelect.options[sizeSelect.selectedIndex].value;
+          console.log(selectedSize);
+          // Loop through buttons and check if selectedSize is unselected make button disabled
+          buttons.forEach(button => {
+            if(selectedSize == 'unselected') {
+              button.disabled = true;
+            } else {
+              button.disabled = false;
+            }
+          });
+        });
       }
     }
   }, 500);
