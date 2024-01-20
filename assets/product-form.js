@@ -92,6 +92,28 @@ if (!customElements.get('product-form')) {
             console.error(e);
           })
           .finally(() => {
+              // SMT Custom Code: Bundle Product -- Handbag - Black - Medium
+              if(formData.get('id') == '44451414900981' && formData.get('Color') == 'Black' && formData.get('options[Size]') == 'Medium'){
+                let bundleProduct = {
+                  id: '44451277570293',
+                  quantity: 1
+                };
+                fetch('/cart/add.js', {
+                  body: JSON.stringify(bundleProduct),
+                  credentials: 'same-origin',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With':'xmlhttprequest' /* XMLHttpRequest is ok too, it's case insensitive */
+                  },
+                  method: 'POST'
+                }).then(function(response) {
+                  return response.json();
+                }).then(function(json) {
+                  console.log("Bundle product added successfully: ", json);
+                }).catch(function(err) {
+                  console.error("Error while adding bundle product to cart: ", err);
+                });
+              }
             this.submitButton.classList.remove('loading');
             if (this.cart && this.cart.classList.contains('is-empty')) this.cart.classList.remove('is-empty');
             if (!this.error) this.submitButton.removeAttribute('aria-disabled');

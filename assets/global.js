@@ -965,11 +965,29 @@ class VariantSelects extends HTMLElement {
     } else {
       this.updateMedia();
       this.updateURL();
+      this.filterMedia();
       this.updateVariantInput();
       this.renderProductInfo();
       this.updateShareUrl();
     }
   }
+
+filterMedia() {
+  var elements = document.querySelectorAll('[thumbnail-color]');
+  elements.forEach(function(element) {
+    element.style.display = 'none';
+  });
+
+  var selectedVariant = this.currentVariant.featured_media.alt;
+  var selectedAttribute = '[thumbnail-color="' + selectedVariant + '"]';
+  
+  if (selectedVariant == selectedVariant) {
+    var selectedElements = document.querySelectorAll(selectedAttribute);
+    selectedElements.forEach(function(selectedElement) {
+      selectedElement.style.display = 'block'; // or any other display value you want
+    });
+  }
+}
 
   updateOptions() {
     this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
@@ -1217,8 +1235,13 @@ class VariantRadios extends VariantSelects {
 
   updateOptions() {
     const fieldsets = Array.from(this.querySelectorAll('fieldset'));
+    // Edited SMT: Added this line to fix the issue with the variant radios not updating
     this.options = fieldsets.map((fieldset) => {
-      return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+      if(fieldset.querySelectorAll('input').length > 0){
+        return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
+      }else {
+        return Array.from(fieldset.querySelectorAll('option')).find((option) => option.selected).value;
+      }
     });
   }
 }

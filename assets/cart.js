@@ -113,6 +113,8 @@ class CartItems extends HTMLElement {
       sections_url: window.location.pathname,
     });
 
+    console.log("Body: ", body);
+
     fetch(`${routes.cart_change_url}`, { ...fetchConfig(), ...{ body } })
       .then((response) => {
         return response.text();
@@ -127,6 +129,35 @@ class CartItems extends HTMLElement {
           quantityElement.value = quantityElement.getAttribute('value');
           this.updateLiveRegions(line, parsedState.errors);
           return;
+        }
+
+        // SMT Custom Code: From parsedState get itemRemoved
+        const itemsRemoved = parsedState.items_removed;
+        const itemsInCart = parsedState.items;
+        if (itemsRemoved && itemsRemoved.length > 0) { 
+          // loop through itemsRemoved
+          itemsRemoved.forEach((itemRemoved) => {
+            // Check if itemRemoved is the same as the variantId for produt bundle option 44451414900981 - Handbag - Black - Medium
+            if(itemRemoved.variant_id == '44451414900981'){
+              // Check if Inside itemsInCart is bundle product item with variantId 44451277570293 - Soft Winter Jacket
+              itemsInCart.forEach((itemInCart) => {
+                if(itemInCart.id == '44451277570293'){
+                  // Make fetch request to remove itemInCart
+                  let bundleItem = itemInCart.id
+                  // Select the document element where data-cart-item-variant-id is equal to bundleItem
+                  let bundleItemElement = document.querySelector(`[data-cart-item-variant-id="${bundleItem}"]`);
+                  if(bundleItemElement){
+                    // Get data-cart-item-line attribute from bundleItemElement
+                    let bundleItemLine = bundleItemElement.getAttribute('data-cart-item-line');
+                    if(bundleItemLine){
+                      // Update quantity to 0
+                      this.updateQuantity(bundleItemLine, 0, null, bundleItem);
+                    }
+                  }
+                }
+              });
+            }
+          });
         }
 
         this.classList.toggle('is-empty', parsedState.item_count === 0);
